@@ -1,0 +1,17 @@
+{
+  "version": "0.1.0",
+  "description": "Plughin for extracting css variables to Reportal Scripts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ConfirmitASA/reportal-postcss-extractor.git"
+  },
+  "main": "index.js",
+  "homepage": "https://github.com/ConfirmitASA/reportal-postcss-extractor#readme",
+  "author": "ConfirmitASA",
+
+  "dependencies": {
+    "csso": "latest",
+    "escape-string-regexp": "latest"
+  },
+  "name": "reportal-postcss-extractor"
+}
