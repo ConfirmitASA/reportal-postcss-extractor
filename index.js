@@ -15,88 +15,13 @@ function dashedToCamel(str) {
 function parseFile(fileContent, css, varNames) {
   const {vars: varsToPaste, extractedProperties} = fileContent;
   Object.keys(extractedProperties).forEach(variable => {
-    /*
-     const variableContent = fileContent[variable];
-     const resolvedValue = variableContent.resolved;
-
-     let regExpStr = '^';
-     let lastIndex = 0;
-     const fixedParts = [];
-     const vars = [];
-
-     while(lastIndex < variable.length) {
-     const indexOfVar = variable.indexOf('var(', lastIndex);
-     const closingIndex = variable.indexOf(')', indexOfVar);
-
-     if (indexOfVar === -1) {
-     const str = variable.substring(lastIndex);
-     fixedParts.push(escapeForJs(str));
-     regExpStr += escapeStringRegexp(str);
-     regExpStr += '$';
-     break;
-     }
-
-     const str = variable.substring(lastIndex, indexOfVar);
-     fixedParts.push(escapeForJs(str));
-     regExpStr += escapeStringRegexp(str) + '(.*)';
-     lastIndex = closingIndex + 1;
-
-     const newVar = variable.substring(indexOfVar, closingIndex + 1);
-     vars.push(newVar);
-     }
-
-     const values = resolvedValue.match(new RegExp(regExpStr));
-     values.shift()*/
-
     // TODO: create string to paste in js using fixedParts + varsToPaste (name = ${'var' + index} )
-
-    /*/var\((?:(?!(var\()|\)).)*\)/
-
-     /var\(\)/
-
-     /(?:(?!(var\()|\)).)*!/*/
-
-
     const variableContent = extractedProperties[variable];
     const resolvedValue = variableContent.resolved;
     let {fixedParts, vars, values} = parseVariable(variable, resolvedValue);
 
     vars.forEach((fullValue, index) => {
-      /*const resolved = escapeForJs(values[index]);
 
-       const indexOfComma = fullValue.indexOf(',');
-       let searchFunc;
-       if (indexOfComma === -1) {
-       searchFunc = item => item.fullValue == fullValue && item.resolved == resolved;
-       } else {
-       const variableName = fullValue.substring(0, indexOfComma) + ')';
-       searchFunc = item => item.fullValue == variableName && item.resolved == resolved;
-       }
-       const variableIndex = varsToPaste.findIndex(item => item.name == fullValue);
-       let varName;
-
-       if (variableIndex === -1) {
-       if(indexOfComma === -1) {
-       //varName = dashedToCamel(fullValue.substring(6, fullValue.length - 1));
-       varName = dashedToCamel(fullValue.substring(0, fullValue.length - 1).replace(/\s*var\(\s*--/, ''));
-       varsToPaste.push({fullValue, resolved, varName});
-       } else {
-       //const variableName = dashedToCamel(fullValue.substring(6, indexOfComma));
-       const variableName = dashedToCamel(fullValue.substring(0, indexOfComma).replace(/\s*var\(\s*--/, ''));
-       const fallback = fullValue.substring(indexOfComma + 1, fullValue.length - 1);
-
-       const index = varsToPaste.findIndex(item => item.resolved.trim() == fallback.trim() && item.varName == variableName);
-       if (index === -1) {
-       varName = `var${varsToPaste.length + 1}`;
-       varsToPaste.push({fullValue, resolved, varName});
-       } else {
-       varName = varsToPaste[index].varName;
-       }
-       }
-       } else {
-       //varName = `var${variableIndex + 1}`;
-       varName = varsToPaste[variableIndex].varName;
-       }*/
       let varName, cssVarName;
       const indexOfComma = fullValue.indexOf(',');
 
@@ -138,10 +63,6 @@ function getNewCssToPrint(variableContent, valueToPrintInCSS) {
 }
 
 function parseVariable(variable, resolvedValue) {
-  /*const resolvedValue = variableContent.resolved;
-   if (!resolvedValue) {
-   return;
-   }*/
 
     let regExpStr = '^';
     let lastIndex = 0;
