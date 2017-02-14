@@ -143,36 +143,53 @@ function parseVariable(variable, resolvedValue) {
    return;
    }*/
 
-  let regExpStr = '^';
-  let lastIndex = 0;
-  const fixedParts = [];
-  const vars = [];
+    let regExpStr = '^';
+    let lastIndex = 0;
+    const fixedParts = [];
+    const vars = [];
+    const varIndentificator = 'var(';
 
-  while (lastIndex < variable.length) {
-    const indexOfVar = variable.indexOf('var(', lastIndex);
-    const closingIndex = variable.indexOf(')', indexOfVar);
+    while (lastIndex < variable.length) {
+        const indexOfVar = variable.indexOf(varIndentificator, lastIndex);
 
-    if (indexOfVar === -1) {
-      const str = variable.substring(lastIndex);
-      fixedParts.push(escapeForJs(str));
-      regExpStr += escapeStringRegexp(str);
-      regExpStr += '$';
-      break;
+        if (indexOfVar === -1) {
+            const str = variable.substring(lastIndex);
+            fixedParts.push(escapeForJs(str));
+            regExpStr += escapeStringRegexp(str);
+            regExpStr += '$';
+            break;
+        }
+
+        let numberOfBrackets = 1;
+        let closingIndex;
+        for (closingIndex = indexOfVar + varIndentificator.length; closingIndex < variable.length && numberOfBrackets > 0; closingIndex++) {
+            switch (variable[closingIndex]) {
+                case '(':
+                    numberOfBrackets++;
+                    break;
+                case ')':
+                    numberOfBrackets--;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        //const closingIndex = variable.indexOf(')', indexOfVar);
+
+        const str = variable.substring(lastIndex, indexOfVar);
+        fixedParts.push(escapeForJs(str));
+        regExpStr += escapeStringRegexp(str) + '(.*)';
+        lastIndex = closingIndex + 1;
+
+        const newVar = variable.substring(indexOfVar, closingIndex + 1);
+        vars.push(newVar);
     }
 
-    const str = variable.substring(lastIndex, indexOfVar);
-    fixedParts.push(escapeForJs(str));
-    regExpStr += escapeStringRegexp(str) + '(.*)';
-    lastIndex = closingIndex + 1;
+    const values = resolvedValue.match(new RegExp(regExpStr));
+    values.shift();
 
-    const newVar = variable.substring(indexOfVar, closingIndex + 1);
-    vars.push(newVar);
-  }
-
-  const values = resolvedValue.match(new RegExp(regExpStr));
-  values.shift();
-
-  return {fixedParts, vars, values};
+    return {fixedParts, vars, values};
 }
 
 function escapeForJs(str) {
