@@ -65,7 +65,7 @@ function getNewJsToPrint(variableContent, variable, varsToPaste) {
         if ((item = varsToPaste.find(item => item.name == cssVarName))) {
             item.used = true;
             varName = dashedToCamel(cssVarName.replace('--', ''));
-            valueToPrintInJS += `" + ${varName} + \n"`;
+            valueToPrintInJS += `" + ${varName} + \n"\\n`;
         } else {
             valueToPrintInJS += escapeForJs(values[index]);
         }
