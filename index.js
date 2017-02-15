@@ -47,7 +47,6 @@ function getNewJsToPrint(variableContent, variable, varsToPaste) {
     let js = '';
     const resolvedValue = variableContent.resolved;
     let {fixedParts, vars, values} = parseVariable(variable, resolvedValue);
-    console.log(fixedParts.length, vars.length, values.length)
     let valueToPrintInJS = fixedParts[0];
 
     vars.forEach((fullValue, index) => {
