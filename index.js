@@ -139,7 +139,7 @@ function findIndexOfClosingBracket(variable, start) {
         }
     }
 
-    return closingIndex;
+    return closingIndex - 1;
 }
 
 function escapeForJs(str) {
