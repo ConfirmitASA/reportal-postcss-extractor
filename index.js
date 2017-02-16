@@ -15,29 +15,7 @@ function dashedToCamel(str) {
 function parseFile(fileContent, css, /*varNames, */js) {
     const {vars: varsToPaste, extractedProperties} = fileContent;
     Object.keys(extractedProperties).forEach(variable => {
-        // TODO: create string to paste in js using fixedParts + varsToPaste (name = ${'var' + index} )
         const variableContent = extractedProperties[variable];
-        /*const resolvedValue = variableContent.resolved;
-        let {fixedParts, vars, values} = parseVariable(variable, resolvedValue);
-
-        vars.forEach((fullValue) => {
-
-            let varName, cssVarName;
-            const indexOfComma = fullValue.indexOf(',');
-
-            if (indexOfComma == -1) {
-                cssVarName = fullValue.substring(0, fullValue.length - 1).replace(/\s*var\(\s*!/, '').trim();
-            } else {
-                cssVarName = fullValue.substring(0, indexOfComma).replace(/\s*var\(\s*!/, '').trim();
-            }
-
-            let item;
-            if (item = varsToPaste.find(item => item.name == cssVarName)) {
-                varName = dashedToCamel(cssVarName.replace('--', ''));
-                varNames.push({fullValue, varName});
-                item.used = true;
-            }
-        });*/
         js.push(getNewJsToPrint(variableContent, variable, varsToPaste));
         css.push(getNewCssToPrint(variableContent, variable));
     });
@@ -46,6 +24,7 @@ function parseFile(fileContent, css, /*varNames, */js) {
 function getNewJsToPrint(variableContent, variable, varsToPaste) {
     let js = '';
     const resolvedValue = variableContent.resolved;
+    // TODO: create string to paste in js using fixedParts + varsToPaste (name = ${'var' + index} )
     let {fixedParts, vars, values} = parseVariable(variable, resolvedValue);
     let valueToPrintInJS = fixedParts[0];
 
@@ -128,22 +107,7 @@ function parseVariable(variable, resolvedValue) {
             break;
         }
 
-        //const closingIndex = variable.indexOf(')', indexOfVar);
-        let numberOfBrackets = 1;
-        let closingIndex;
-        for (closingIndex = indexOfVar + varIdentification.length; closingIndex < variable.length && numberOfBrackets > 0; closingIndex++) {
-            switch (variable[closingIndex]) {
-                case '(':
-                    numberOfBrackets++;
-                    break;
-                case ')':
-                    numberOfBrackets--;
-                    break;
-                default:
-                    break;
-            }
-        }
-
+        const closingIndex = findIndexOfClosingBracket(variable, indexOfVar + varIdentification.length);
         const str = variable.substring(lastIndex, indexOfVar);
         fixedParts.push(escapeForJs(str));
         regExpStr += escapeStringRegexp(str) + '(.*)';
@@ -157,6 +121,25 @@ function parseVariable(variable, resolvedValue) {
     values.shift();
 
     return {fixedParts, vars, values};
+}
+
+function findIndexOfClosingBracket(variable, start) {
+    let numberOfBrackets = 1;
+    let closingIndex;
+    for (closingIndex = start; closingIndex < variable.length && numberOfBrackets > 0; closingIndex++) {
+        switch (variable[closingIndex]) {
+            case '(':
+                numberOfBrackets++;
+                break;
+            case ')':
+                numberOfBrackets--;
+                break;
+            default:
+                break;
+        }
+    }
+
+    return closingIndex;
 }
 
 function escapeForJs(str) {
