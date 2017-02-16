@@ -209,7 +209,15 @@ class ReportalPostCssExtractor {
 
                 varsToPaste.forEach(variable => {
                     const variableName = dashedToCamel(variable.name.replace('--', ''));
-                    usualVars.push(`var ${variableName} = ${className}.${classFieldName}.${variableName};`);
+                    let usualVar = `var ${variableName} = ${className}.${classFieldName}.${variableName}`;
+                    const fallback = variable.fallback;
+                    if (fallback) {
+                        usualVar += ` || ${className}.${classFieldName}.${dashedToCamel(fallback.replace('--', ''))};`;
+                    } else {
+                        usualVar += ';';
+                    }
+                    //usualVars.push(`var ${variableName} = ${className}.${classFieldName}.${variableName};`);
+                    usualVars.push(usualVar);
                     varsForConfig.push(`${variableName}: "${escapeForJs(variable.value)}"`);
                 });
 
