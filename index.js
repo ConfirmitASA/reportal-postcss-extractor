@@ -24,7 +24,6 @@ function parseFile(fileContent, css, /*varNames, */js) {
 function getNewJsToPrint(variableContent, variable, varsToPaste) {
     let js = '';
     const resolvedValue = variableContent.resolved;
-    // TODO: create string to paste in js using fixedParts + varsToPaste (name = ${'var' + index} )
     let {fixedParts, vars, values} = parseVariable(variable, resolvedValue);
     let valueToPrintInJS = fixedParts[0];
 
