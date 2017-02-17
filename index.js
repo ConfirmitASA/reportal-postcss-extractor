@@ -192,7 +192,9 @@ class ReportalPostCssExtractor {
 
                     //parseFile(fileContent, css, varNames);
                     parseFile(fileContent, css, js);
-                    fileContent.vars.filter(item => item.used).forEach(variable => {
+                    fileContent.vars
+                        .filter((item, index, arr) => item.used || arr.some(anotherItem => anotherItem.fallback == item.name))
+                        .forEach(variable => {
                         if (!varsToPaste.find(item => item.name == variable.name)) {
                             varsToPaste.push(variable);
                         }
