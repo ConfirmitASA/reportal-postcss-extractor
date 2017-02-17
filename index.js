@@ -156,8 +156,8 @@ function getJsContent(css, varNames) {
 }
 
 class ReportalPostCssExtractor {
-    constructor(varNames) {
-        this.varNames = varNames;
+    constructor(mainFile = 'main.css') {
+        this.mainFile = mainFile;
     }
 
     saveToAssets(compilation, fileName, fileContent) {
@@ -181,7 +181,8 @@ class ReportalPostCssExtractor {
                     throw err;
                 }
 
-                const filesToRead = files.filter(item => /^output.*\.json$/.test(item));
+                const filesToRead = [`output-${this.mainFile}.json`];
+                //const filesToRead = files.filter(item => /^output.*\.json$/.test(item));
 
                 const css = [], js = [];
                 const varsToPaste = [];
