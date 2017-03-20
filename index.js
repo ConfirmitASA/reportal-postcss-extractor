@@ -72,9 +72,11 @@ function getNewCssToPrint(variableContent, valueToPrintInCSS) {
     let css = '';
 
     Object.keys(variableContent).filter(property => property != 'resolved' && property != 'associatedVars').forEach(property => {
-        const simpleSelectors = variableContent[property].filter(item => !item.atrules);
-        const selector = simpleSelectors.map(item => item.selectorName).join(',');
-        css += `${selector} {${property}: ${valueToPrintInCSS};}`;
+        const simpleSelectors = variableContent[property].filter(item => item.atrules === undefined || item.atrules.length == 0);
+        if (simpleSelectors.length > 0) {
+            const selector = simpleSelectors.map(item => item.selectorName).join(',');
+            css += `${selector} {${property}: ${valueToPrintInCSS};}`;
+        }
 
         const selectorsWithAtRules = variableContent[property].filter(item => item.atrules);
         selectorsWithAtRules.forEach(selector => {
